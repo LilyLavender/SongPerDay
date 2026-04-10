@@ -81,8 +81,20 @@ button {
   font-weight: 600;
 }
 
+.entry {
+  cursor: pointer;
+}
+
 .entry.today {
   outline: 2px solid #4da3ff;
+}
+
+.entry.editing {
+  outline: 2px solid #a855f7;
+}
+
+.entry:hover {
+  outline: 2px solid chartreuse;
 }
 
 input {

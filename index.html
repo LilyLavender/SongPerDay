@@ -151,7 +151,8 @@
             <div class="entry"
                  v-for="day in yearEntries"
                  :key="day.date"
-                 :class="{ today: day.date === todayISOComputed }">
+                 :class="{ today: day.date === todayISOComputed, editing: day.date === editingDate }"
+                 @click="selectEntry(day.date)">
 
               <div class="date">
                 <div class="month">{{ formatMonth(day.date) }}</div>

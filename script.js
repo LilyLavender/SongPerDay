@@ -11,6 +11,7 @@ const app = Vue.createApp({
       canonFormInput: "",
       showFeatSuggestions: false,
       showCanonSuggestions: false,
+      editingDate: null,
     };
   },
 
@@ -259,6 +260,12 @@ const app = Vue.createApp({
       this.saveEntries();
       this.form = this.createEmptyForm();
       this.canonFormInput = "";
+      this.editingDate = null;
+    },
+
+    selectEntry(date) {
+      this.editingDate = date;
+      this.form.date = date;
     },
 
     onArtistInput() {
