@@ -1,210 +1,606 @@
+/* =============================================
+   CSS CUSTOM PROPERTIES
+   ============================================= */
+
+:root {
+  --bg: #07090f;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 255, 255, 0.07);
+  --bg-input: rgba(255, 255, 255, 0.06);
+  --bg-input-focus: rgba(255, 255, 255, 0.09);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-focus: rgba(96, 165, 250, 0.55);
+  --blur: blur(14px);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --text: #e2e8f0;
+  --text-muted: rgba(226, 232, 240, 0.45);
+  --text-dim: rgba(226, 232, 240, 0.25);
+  --accent-blue: #60a5fa;
+  --accent-purple: #a78bfa;
+  --accent-green: chartreuse;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* =============================================
+   RESET / BASE
+   ============================================= */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: system-ui, sans-serif;
-  background: #111;
-  color: #eee;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse at 15% 60%, rgba(96, 165, 250, 0.07) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 15%, rgba(167, 139, 250, 0.05) 0%, transparent 50%);
+  background-attachment: fixed;
+  color: var(--text);
+  min-height: 100vh;
 }
+
+/* =============================================
+   TABS
+   ============================================= */
+
+.tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 0.85rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: color 0.15s;
+  position: relative;
+}
+
+.tabs button:hover {
+  color: var(--text);
+}
+
+.tabs button.active {
+  color: var(--text);
+}
+
+.tabs button.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: var(--accent-blue);
+  border-radius: 999px;
+}
+
+/* =============================================
+   LOG TAB LAYOUT
+   ============================================= */
 
 .layout {
   display: grid;
-  grid-template-columns: 380px 1fr;
-  height: 100vh;
+  grid-template-columns: 360px 1fr;
+  height: calc(100vh - 48px);
 }
+
+/* =============================================
+   FORM COLUMN
+   ============================================= */
 
 .form-column {
   padding: 1.5rem;
-  background: #161616;
-  border-right: 1px solid #222;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border-right: 1px solid var(--border);
   position: sticky;
-  top: 0;
-  height: 100vh;
+  top: 48px;
+  height: calc(100vh - 48px);
+  overflow-y: auto;
+}
+
+.form-column h1 {
+  margin: 0 0 1.25rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--text) 40%, var(--text-muted));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 form {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.65rem;
 }
 
-input,
-button {
-  padding: 0.5rem;
-  font-size: 1rem;
-}
-
-button {
-  cursor: pointer;
-}
-
-.list-column {
-  overflow-y: auto;
-  padding: 1.5rem;
-}
-
-.entries {
-  display: grid;
-  gap: 1rem;
-}
-
-.entry {
-  display: flex;
-  gap: 1rem;
-  background: #1c1c1c;
-  padding: 1rem;
-  border-radius: 8px;
-}
-
-.entry img {
-  width: 64px;
-  height: 64px;
-  object-fit: cover;
-  border-radius: 4px;
-}
-
-.date {
-  width: 2em;
-  text-align: center;
-  line-height: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.date .month {
-  font-size: 0.7rem;
-  opacity: 0.7;
-  text-transform: uppercase;
-}
-
-.date .day {
-  font-size: 1.4rem;
-  font-weight: 600;
-}
-
-.entry {
-  cursor: pointer;
-}
-
-.entry.today {
-  outline: 2px solid #4da3ff;
-}
-
-.entry.editing {
-  outline: 2px solid #a855f7;
-}
-
-.entry:hover {
-  outline: 2px solid chartreuse;
-}
+/* =============================================
+   INPUTS
+   ============================================= */
 
 input {
-  background: #1c1c1c;
-  border: 1px solid #2a2a2a;
-  color: #eee;
-  padding: 0.6rem 0.65rem;
-  font-size: 0.95rem;
-  border-radius: 6px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.55rem 0.7rem;
+  font-size: 0.9rem;
+  border-radius: var(--radius-sm);
   outline: none;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  width: 100%;
 }
 
 input::placeholder {
-  color: #777;
+  color: var(--text-dim);
 }
 
 input:focus {
-  border-color: #4da3ff;
-  box-shadow: 0 0 0 1px rgba(77, 163, 255, 0.4);
+  border-color: var(--border-focus);
+  background: var(--bg-input-focus);
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+}
+
+input:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* =============================================
+   INPUT WRAPPERS WITH CLEAR BUTTON
+   ============================================= */
+
+.input-wrap {
+  position: relative;
+}
+
+.input-wrap input {
+  padding-right: 2rem;
+}
+
+.input-clear {
+  position: absolute;
+  right: 0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0.2rem;
+  border-radius: 4px;
+  transition: color 0.1s;
+}
+
+.input-clear:hover {
+  color: var(--text);
+}
+
+/* =============================================
+   FORM LAYOUT HELPERS
+   ============================================= */
+
+.form-row {
+  display: flex;
+  gap: 0.6rem;
 }
 
 .form-group {
   position: relative;
+  flex: 1;
+  min-width: 0;
 }
+
+.form-group input {
+  width: 100%;
+}
+
+input.input-year {
+  width: 75px;
+}
+
+.canon-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 36px;
+}
+
+/* =============================================
+   BUTTONS
+   ============================================= */
+
+button {
+  cursor: pointer;
+  font-size: 0.9rem;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 0.65rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: var(--radius-md);
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+  margin-top: 0.25rem;
+}
+
+button[type="submit"]:hover {
+  opacity: 0.9;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.45);
+}
+
+/* =============================================
+   AUTOCOMPLETE SUGGESTIONS
+   ============================================= */
 
 .suggestions {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  background: #1b1b1b;
-  border: 1px solid #2a2a2a;
-  border-radius: 6px;
+  background: rgba(15, 20, 35, 0.95);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   max-height: 160px;
   overflow-y: auto;
-  z-index: 10;
+  z-index: 20;
+  box-shadow: var(--shadow);
 }
 
 .suggestions div {
-  padding: 0.5rem 0.6rem;
+  padding: 0.45rem 0.65rem;
   cursor: pointer;
+  font-size: 0.875rem;
+  transition: background 0.1s;
 }
 
 .suggestions div:hover {
-  background: #2a2a2a;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* =============================================
+   ALIAS CHIPS
+   ============================================= */
+
+.alias-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(96, 165, 250, 0.12);
+  border: 1px solid rgba(96, 165, 250, 0.25);
+  border-radius: 999px;
+  padding: 0.2rem 0.5rem 0.2rem 0.65rem;
+  font-size: 0.8rem;
+  color: var(--accent-blue);
+}
+
+.alias-chip button {
+  background: none;
+  border: none;
+  color: rgba(96, 165, 250, 0.6);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0;
+  line-height: 1;
+  border-radius: 0;
+}
+
+.alias-chip button:hover {
+  color: #ff6b6b;
+}
+
+input.input-canon {
+  width: 130px;
+  font-size: 0.85rem;
+}
+
+/* =============================================
+   LIST COLUMN
+   ============================================= */
+
+.list-column {
+  overflow-y: auto;
+  padding: 0rem 1.5rem 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* =============================================
+   YEAR / LIST HEADER
+   ============================================= */
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+  padding: 0.5rem 1.5rem 0.65rem;
+  margin-bottom: 0.75rem;
+}
+
+.year-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.year-nav button {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  border-radius: var(--radius-sm);
+}
+
+.year-nav button:hover {
+  background: var(--bg-card-hover);
+  color: var(--text);
+}
+
+.year-nav strong {
+  font-size: 1.1rem;
+  font-weight: 700;
+  min-width: 3.5rem;
+  text-align: center;
+}
+
+.btn-today {
+  background: rgba(96, 165, 250, 0.1);
+  border: 1px solid rgba(96, 165, 250, 0.25);
+  color: var(--accent-blue);
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 999px;
+}
+
+.btn-today:hover {
+  background: rgba(96, 165, 250, 0.18);
+}
+
+/* =============================================
+   MONTH GROUP
+   ============================================= */
+
+.month-group {
+  margin-bottom: 0.5rem;
+}
+
+.month-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.5rem;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  user-select: none;
+  transition: background 0.1s;
+}
+
+.month-header:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.month-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.month-header-left .month-count {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+}
+
+.month-chevron {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  transition: transform 0.2s;
+}
+
+.month-chevron.open {
+  transform: rotate(90deg);
+}
+
+.month-entries {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.25rem 0 0.5rem;
+}
+
+/* =============================================
+   ENTRY CARDS
+   ============================================= */
+
+.entry {
+  display: flex;
+  gap: 0.85rem;
+  background: var(--bg-card);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  padding: 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.entry img {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.date {
+  width: 2.2rem;
+  text-align: center;
+  line-height: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.date .month {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.date .day {
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 
 .meta {
-  margin-top: 0.5em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
 }
 
 .meta.missing {
-  margin-top: 0.4em;
-  opacity: 0.4;
+  opacity: 0.25;
+}
+
+.song-line {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3em;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .song {
-  font-size: 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .feat {
-  font-size: 15px;
-  margin-left: 0.5em;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.artist {
-  font-size: 16px;
+.meta > div {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 0.15rem;
 }
 
-.album, .year {
-  font-size: 16px;
+.artist { }
+.album { }
+.year  { }
+
+/* Entry states */
+.entry.today {
+  border-color: rgba(96, 165, 250, 0.4);
+  box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.15), inset 0 0 20px rgba(96, 165, 250, 0.04);
 }
 
-.form-row {
-  display: flex;
-  gap: 0.75rem;
+.entry.editing {
+  border-color: rgba(167, 139, 250, 0.5);
+  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.2), inset 0 0 20px rgba(167, 139, 250, 0.05);
+  background: rgba(167, 139, 250, 0.05);
 }
 
-input.input-title { width: 309px; }
-input.input-artist { width: 160px; }
-input.input-ft { width: 114px; }
-input.input-album { width: 209px; }
-input.input-year { width: 65px; }
-input.input-art { width: 309px; }
-
-.tabs {
-  display: flex;
-  background: #0f0f0f;
-  border-bottom: 1px solid #222;
+.entry:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(var(--accent-green), 0.4);
+  box-shadow: 0 0 0 1px rgba(127, 255, 0, 0.2);
 }
 
-.tabs button {
-  flex: 1;
-  padding: 0.75rem;
-  background: none;
-  border: none;
-  color: #aaa;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.tabs button.active {
-  color: #fff;
-  border-bottom: 2px solid #4da3ff;
-}
+/* =============================================
+   STATS VIEW
+   ============================================= */
 
 .stats-view {
-  padding: 2rem;
+  padding: 1.5rem;
   height: calc(100vh - 48px);
   overflow-y: auto;
+}
+
+.stats-view h2 {
+  margin: 0 0 1.25rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
 }
 
 .stats-grid {
@@ -213,46 +609,64 @@ input.input-art { width: 309px; }
   gap: 1rem;
 }
 
+/* =============================================
+   STATS CARDS
+   ============================================= */
+
 .stats-card {
-  background: #1c1c1c;
-  padding: 1rem;
-  border-radius: 8px;
+  background: var(--bg-card);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
 }
 
-.stat-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  background: linear-gradient(
-    to right,
-    rgba(77, 163, 255, 0.15) var(--bar-pct, 0%),
-    transparent var(--bar-pct, 0%)
-  );
-}
-
-.count {
-  background: #333;
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.8rem;
+.stats-card h3 {
+  margin: 0 0 1rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
 }
 
 .year-chart-card {
   grid-column: 1 / -1;
 }
 
+/* =============================================
+   HORIZONTAL BAR CHART (Artists)
+   ============================================= */
+
 .h-bar-chart {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
 }
 
 .h-bar-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 18px;
+  height: 20px;
+  transition: opacity 0.2s;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0 2px;
+}
+
+.h-bar-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.h-bar-row:hover .h-bar-label {
+  color: var(--text);
+}
+
+.h-bar-row.dimmed {
+  opacity: 0.15;
 }
 
 .h-bar-label {
@@ -263,186 +677,41 @@ input.input-art { width: 309px; }
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  opacity: 0.85;
+  color: var(--text-muted);
 }
 
 .h-bar-track {
   flex: 1;
-  background: #2a2a2a;
-  border-radius: 3px;
-  height: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  height: 8px;
   overflow: hidden;
 }
 
 .h-bar-fill {
   height: 100%;
-  background: #4da3ff;
-  border-radius: 3px;
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, var(--accent-blue), #818cf8);
+  border-radius: 999px;
+  transition: width 0.4s ease;
 }
 
 .h-bar-count {
   font-size: 0.7rem;
-  opacity: 0.7;
+  color: var(--text-dim);
   flex-shrink: 0;
   width: 1.5rem;
   text-align: right;
 }
 
-/* Cover picker modal */
-.cover-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-
-.cover-modal {
-  background: #1c1c1c;
-  border: 1px solid #2a2a2a;
-  border-radius: 10px;
-  padding: 1.25rem;
-  min-width: 280px;
-  max-width: 480px;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.cover-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.cover-modal-header button {
-  background: none;
-  border: none;
-  color: #888;
-  cursor: pointer;
-  font-size: 1rem;
-  line-height: 1;
-}
-
-.cover-modal-header button:hover {
-  color: #eee;
-}
-
-.cover-modal-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.cover-modal-options img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 4px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: border-color 0.15s;
-}
-
-.cover-modal-options img:hover {
-  border-color: #4da3ff;
-}
-
-.cover-modal-options img.cover-selected {
-  border-color: #a855f7;
-}
-
-.cover-modal-custom {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.cover-modal-custom input {
-  flex: 1;
-}
-
-.album-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 0.75rem;
-}
-
-.album-tile {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  min-width: 0;
-}
-
-.album-art-wrap {
-  position: relative;
-  aspect-ratio: 1;
-  cursor: pointer;
-}
-
-.album-art-wrap:hover img,
-.album-art-wrap:hover .album-art-placeholder {
-  opacity: 0.75;
-}
-
-.album-art-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 4px;
-  display: block;
-}
-
-.album-art-placeholder {
-  width: 100%;
-  height: 100%;
-  background: #2a2a2a;
-  border-radius: 4px;
-}
-
-.album-play-count {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  background: rgba(0, 0, 0, 0.72);
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 0.1rem 0.4rem;
-  border-radius: 999px;
-}
-
-.album-tile-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-  overflow: hidden;
-}
-
-.album-tile-name {
-  font-size: 0.75rem;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.album-tile-artist {
-  font-size: 0.7rem;
-  opacity: 0.55;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+/* =============================================
+   YEAR VERTICAL BAR CHART
+   ============================================= */
 
 .year-bar-chart {
   display: flex;
   align-items: flex-end;
   gap: 6px;
-  height: 160px;
+  height: 140px;
   padding-bottom: 1.6rem;
 }
 
@@ -455,64 +724,416 @@ input.input-art { width: 309px; }
   justify-content: flex-end;
   height: 100%;
   position: relative;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.year-bar-col.dimmed {
+  opacity: 0.2;
+}
+
+.year-bar-col.selected .year-bar-fill {
+  background: linear-gradient(180deg, #e879f9, var(--accent-purple));
+}
+
+.year-bar-col.selected .year-bar-label {
+  color: var(--accent-purple);
+  font-weight: 600;
 }
 
 .year-bar-fill {
   width: 100%;
-  background: #4da3ff;
+  background: linear-gradient(180deg, #818cf8, var(--accent-blue));
   border-radius: 3px 3px 0 0;
-  transition: height 0.3s ease;
+  transition: height 0.4s ease;
 }
 
 .year-bar-count {
-  font-size: 0.7rem;
-  opacity: 0.7;
-  margin-bottom: 2px;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  margin-bottom: 3px;
   min-height: 1em;
 }
 
 .year-bar-label {
   position: absolute;
   bottom: -1.5rem;
-  font-size: 0.7rem;
-  opacity: 0.6;
+  font-size: 0.65rem;
+  color: var(--text-dim);
   white-space: nowrap;
 }
 
-/* ---- Canon artists (per-song form) ---- */
+/* =============================================
+   ALBUM GRID
+   ============================================= */
 
-.canon-row {
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.75rem;
+}
+
+.album-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+  transition: opacity 0.2s;
+}
+
+.album-tile.dimmed {
+  opacity: 0.15;
+}
+
+.album-art-wrap {
+  position: relative;
+  aspect-ratio: 1;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.album-art-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.15s;
+}
+
+.album-art-wrap:hover img,
+.album-art-wrap:hover .album-art-placeholder {
+  opacity: 0.7;
+}
+
+.album-art-placeholder {
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px dashed var(--border);
+}
+
+.album-play-count {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.38rem;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+}
+
+.album-tile-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  overflow: hidden;
+}
+
+.album-tile-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.album-tile-artist {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =============================================
+   STAT ROW (legacy, kept for any remaining use)
+   ============================================= */
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.25rem 0;
+}
+
+.count {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* =============================================
+   COVER PICKER MODAL
+   ============================================= */
+
+.cover-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.cover-modal {
+  background: rgba(12, 16, 28, 0.95);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  min-width: 280px;
+  max-width: 480px;
+  width: 90vw;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.cover-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cover-modal-header strong {
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.cover-modal-header button {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  padding: 0;
+  border-radius: var(--radius-sm);
+}
+
+.cover-modal-header button:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.cover-modal-options {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
 }
 
-.alias-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  background: #2a2a2a;
-  border-radius: 999px;
-  padding: 0.2rem 0.5rem 0.2rem 0.65rem;
-  font-size: 0.85rem;
-}
-
-.alias-chip button {
-  background: none;
-  border: none;
-  color: #777;
+.cover-modal-options img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.15s, transform 0.1s;
+}
+
+.cover-modal-options img:hover {
+  border-color: var(--accent-blue);
+  transform: scale(1.04);
+}
+
+.cover-modal-options img.cover-selected {
+  border-color: var(--accent-purple);
+}
+
+.cover-modal-custom {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.cover-modal-custom input {
+  flex: 1;
+}
+
+.cover-modal-custom button {
+  background: var(--bg-card-hover);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0 0.85rem;
+  white-space: nowrap;
+}
+
+.cover-modal-custom button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* =============================================
+   CONFIRMATION DIALOG
+   ============================================= */
+
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.confirm-dialog {
+  background: rgba(12, 16, 28, 0.97);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  max-width: 320px;
+  width: 90vw;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.confirm-dialog p {
+  margin: 0;
   font-size: 0.9rem;
-  padding: 0;
-  line-height: 1;
+  color: var(--text-muted);
+  line-height: 1.5;
 }
 
-.alias-chip button:hover {
-  color: #ff6b6b;
+.confirm-dialog strong {
+  display: block;
+  font-size: 1rem;
+  color: var(--text);
+  margin-bottom: 0.25rem;
 }
 
-input.input-canon {
-  width: 130px;
-  font-size: 0.85rem;
+.confirm-actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+}
+
+.confirm-actions .btn-cancel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 0.45rem 0.9rem;
+}
+
+.confirm-actions .btn-cancel:hover {
+  color: var(--text);
+  background: var(--bg-card-hover);
+}
+
+.confirm-actions .btn-discard {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #f87171;
+  padding: 0.45rem 0.9rem;
+  font-weight: 600;
+}
+
+.confirm-actions .btn-discard:hover {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+/* =============================================
+   MOBILE RESPONSIVE
+   ============================================= */
+
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    height: auto;
+    width: 100%;
+  }
+
+  .form-column {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 1rem;
+  }
+
+  .list-column {
+    padding: 0rem 1rem 1rem 1rem;
+    overflow-x: hidden;
+  }
+
+  .list-header {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .stats-view {
+    height: auto;
+    padding: 1rem;
+    overflow-x: hidden;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .year-chart-card {
+    grid-column: auto;
+  }
+
+  .album-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .h-bar-label {
+    width: 80px;
+    font-size: 0.7rem;
+  }
+
+  .h-bar-count {
+    width: 1.2rem;
+    font-size: 0.65rem;
+  }
+
+  .entry {
+    padding: 0.65rem;
+    gap: 0.6rem;
+  }
+
+  .entry img {
+    width: 42px;
+    height: 42px;
+  }
+
+  .song {
+    font-size: 0.85rem;
+  }
+
+  .meta > div {
+    font-size: 0.73rem;
+  }
+
+  .stats-card {
+    padding: 0.85rem;
+  }
+
+  .stats-card h3 {
+    font-size: 0.65rem;
+  }
 }

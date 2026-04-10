@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Song Per Day</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <link rel="stylesheet" href="./style.css">
@@ -10,135 +11,130 @@
   <div id="app">
 
     <div class="tabs">
-      <button :class="{ active: activeTab === 'log' }" @click="activeTab = 'log'">
-        Log
-      </button>
-      <button :class="{ active: activeTab === 'stats' }" @click="activeTab = 'stats'">
-        Stats
-      </button>
+      <button :class="{ active: activeTab === 'log' }" @click="activeTab = 'log'">Log</button>
+      <button :class="{ active: activeTab === 'stats' }" @click="activeTab = 'stats'">Stats</button>
     </div>
 
+    <!-- ===================== LOG TAB ===================== -->
     <div v-if="activeTab === 'log'">
-
       <div class="layout">
+
         <!-- Form -->
         <div class="form-column">
           <h1>Song Per Day</h1>
 
           <form @submit.prevent="saveSong">
+            <!-- Date -->
             <label>
               Day
-              <input type="date" v-model="form.date" />
+              <input type="date" :value="form.date" @change="e => requestDateChange(e.target.value, false)" />
             </label>
 
             <!-- Title -->
-            <input class="input-title" v-model="form.song" placeholder="Song title" required />
-            <!-- Artist & ft. -->
+            <div class="input-wrap">
+              <input class="input-title" v-model="form.song" placeholder="Song title" required />
+              <button v-if="form.song" type="button" class="input-clear" @click="form.song = ''">×</button>
+            </div>
+
+            <!-- Artist & Ft. -->
             <div class="form-row">
-              <!-- Artist -->
               <div class="form-group">
-                <input
-                  class="input-artist"
-                  v-model="form.artist"
-                  placeholder="Artist"
-                  @input="onArtistInput"
-                  @focus="showArtistSuggestions = true"
-                  @blur="hideSuggestions('artist')"
-                  required
-                />
-                <div
-                  v-if="showArtistSuggestions && filteredArtists.length"
-                  class="suggestions"
-                >
-                  <div
-                    v-for="artist in filteredArtists"
-                    :key="artist"
-                    @mousedown.prevent="selectArtist(artist)"
-                  >
+                <div class="input-wrap">
+                  <input
+                    v-model="form.artist"
+                    placeholder="Artist"
+                    @input="onArtistInput"
+                    @focus="showArtistSuggestions = true"
+                    @blur="hideSuggestions('artist')"
+                    required
+                  />
+                  <button v-if="form.artist" type="button" class="input-clear" @click="clearArtist">×</button>
+                </div>
+                <div v-if="showArtistSuggestions && filteredArtists.length" class="suggestions">
+                  <div v-for="artist in filteredArtists" :key="artist" @mousedown.prevent="selectArtist(artist)">
                     {{ artist }}
                   </div>
                 </div>
               </div>
-              <!-- Ft. -->
               <div class="form-group">
-                <input
-                  class="input-ft"
-                  v-model="form.featuring"
-                  placeholder="Ft."
-                  @input="showFeatSuggestions = true"
-                  @focus="showFeatSuggestions = true"
-                  @blur="hideSuggestions('feat')"
-                />
+                <div class="input-wrap">
+                  <input
+                    class="input-ft"
+                    v-model="form.featuring"
+                    placeholder="Ft."
+                    @input="showFeatSuggestions = true"
+                    @focus="showFeatSuggestions = true"
+                    @blur="hideSuggestions('feat')"
+                  />
+                  <button v-if="form.featuring" type="button" class="input-clear" @click="form.featuring = ''">×</button>
+                </div>
                 <div v-if="showFeatSuggestions && filteredFeat.length" class="suggestions">
-                  <div
-                    v-for="feat in filteredFeat"
-                    :key="feat"
-                    @mousedown.prevent="selectFeat(feat)"
-                  >
+                  <div v-for="feat in filteredFeat" :key="feat" @mousedown.prevent="selectFeat(feat)">
                     {{ feat }}
                   </div>
                 </div>
               </div>
             </div>
-            <!-- Album & year -->
+
+            <!-- Album & Year -->
             <div class="form-row">
-              <!-- Album -->
               <div class="form-group">
-                <input
-                  class="input-album"
-                  v-model="form.album"
-                  placeholder="Album"
-                  @input="onAlbumInput"
-                  @focus="showAlbumSuggestions = true"
-                  @blur="hideSuggestions('album')"
-                  :disabled="!form.artist"
-                  required
-                />
-                <div
-                  v-if="showAlbumSuggestions && filteredAlbums.length"
-                  class="suggestions"
-                >
-                  <div
-                    v-for="album in filteredAlbums"
-                    :key="album"
-                    @mousedown.prevent="selectAlbum(album)"
-                  >
+                <div class="input-wrap">
+                  <input
+                    v-model="form.album"
+                    placeholder="Album"
+                    @input="onAlbumInput"
+                    @focus="showAlbumSuggestions = true"
+                    @blur="hideSuggestions('album')"
+                    :disabled="!form.artist"
+                    required
+                  />
+                  <button v-if="form.album" type="button" class="input-clear" @click="clearAlbum">×</button>
+                </div>
+                <div v-if="showAlbumSuggestions && filteredAlbums.length" class="suggestions">
+                  <div v-for="album in filteredAlbums" :key="album" @mousedown.prevent="selectAlbum(album)">
                     {{ album }}
                   </div>
                 </div>
               </div>
-              <!-- Year -->
-              <div class="form-group">
-                <input class="input-year" v-model="form.year" placeholder="Year" type="number" />
+              <div class="form-group" style="flex: 0 0 auto;">
+                <div class="input-wrap">
+                  <input class="input-year" v-model="form.year" placeholder="Year" type="number" />
+                  <button v-if="form.year" type="button" class="input-clear" @click="form.year = ''">×</button>
+                </div>
               </div>
             </div>
+
             <!-- Album art -->
-            <input class="input-art" v-model="form.albumArt" placeholder="Album art URL" />
+            <div class="input-wrap">
+              <input v-model="form.albumArt" placeholder="Album art URL" />
+              <button v-if="form.albumArt" type="button" class="input-clear" @click="form.albumArt = ''">×</button>
+            </div>
+
             <!-- Canon artists -->
             <div class="canon-row">
               <span v-for="(a, i) in form.canonArtists" :key="i" class="alias-chip">
                 {{ a }}<button type="button" @mousedown.prevent="removeCanonArtist(i)">×</button>
               </span>
-              <div class="form-group">
-                <input
-                  class="input-canon"
-                  v-model="canonFormInput"
-                  placeholder="Canon artist..."
-                  @keydown.enter.prevent="addCanonArtist"
-                  @input="showCanonSuggestions = true"
-                  @focus="showCanonSuggestions = true"
-                  @blur="hideSuggestions('canon')"
-                />
+              <div class="form-group" style="flex: 0 0 auto;">
+                <div class="input-wrap">
+                  <input
+                    class="input-canon"
+                    v-model="canonFormInput"
+                    placeholder="Canon artist..."
+                    @keydown.enter.prevent="addCanonArtist"
+                    @input="showCanonSuggestions = true"
+                    @focus="showCanonSuggestions = true"
+                    @blur="hideSuggestions('canon')"
+                  />
+                </div>
                 <div v-if="showCanonSuggestions && filteredCanon.length" class="suggestions">
-                  <div
-                    v-for="name in filteredCanon"
-                    :key="name"
-                    @mousedown.prevent="selectCanon(name)"
-                  >
+                  <div v-for="name in filteredCanon" :key="name" @mousedown.prevent="selectCanon(name)">
                     {{ name }}
                   </div>
                 </div>
-              </div><button type="button" @click="addCanonArtist">+</button>
+              </div>
+              <button type="button" @click="addCanonArtist" style="background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); padding: 0.3rem 0.6rem;">+</button>
             </div>
 
             <button type="submit">Save Song</button>
@@ -146,49 +142,66 @@
         </div>
 
         <!-- List -->
-        <div class="list-column">
-          <div class="entries">
-            <div class="entry"
-                 v-for="day in yearEntries"
-                 :key="day.date"
-                 :class="{ today: day.date === todayISOComputed, editing: day.date === editingDate }"
-                 @click="selectEntry(day.date)">
+        <div class="list-column" ref="listColumn">
+          <div class="list-header">
+            <div class="year-nav">
+              <button @click="selectedYear--">‹</button>
+              <strong>{{ selectedYear }}</strong>
+              <button @click="selectedYear++">›</button>
+            </div>
+            <button class="btn-today" @click="scrollToToday">Today</button>
+          </div>
 
-              <div class="date">
-                <div class="month">{{ formatMonth(day.date) }}</div>
-                <div class="day">{{ formatDay(day.date) }}</div>
+          <div class="month-group" v-for="month in monthGroups" :key="month.key">
+            <div class="month-header" @click="toggleMonth(month.key)">
+              <div class="month-header-left">
+                <span class="month-chevron" :class="{ open: !collapsedMonths[month.key] }">▶</span>
+                {{ month.label }}
+                <span class="month-count">{{ month.filledCount }}/{{ month.days.length }}</span>
               </div>
-            
-              <template v-if="day.entry">
-                <img
-                  v-if="day.entry.albumArt"
-                  :src="day.entry.albumArt"
-                  alt="Album art"
-                />
-                <div class="meta">
-                  <strong class="song">{{ day.entry.song }}</strong>
-                  <span class="feat" v-if="day.entry.featuring">(ft. {{ day.entry.featuring }})</span>
-                  <div>
-                    <span class="artist">{{ day.entry.artist }}</span>
-                     • 
-                    <span class="album">{{ day.entry.album }}</span>
-                     • 
-                    <span class="year">{{ day.entry.year }}</span>
+            </div>
+            <div class="month-entries" v-if="!collapsedMonths[month.key]">
+              <div
+                class="entry"
+                v-for="day in month.days"
+                :key="day.date"
+                :class="{ today: day.date === todayISOComputed, editing: day.date === editingDate }"
+                :data-date="day.date"
+                @click="selectEntry(day.date)"
+              >
+                <div class="date">
+                  <div class="month">{{ formatMonth(day.date) }}</div>
+                  <div class="day">{{ formatDay(day.date) }}</div>
+                </div>
+
+                <template v-if="day.entry">
+                  <img v-if="day.entry.albumArt" :src="day.entry.albumArt" alt="Album art" />
+                  <div class="meta">
+                    <div class="song-line">
+                      <strong class="song">{{ day.entry.song }}</strong>
+                      <span class="feat" v-if="day.entry.featuring">(ft. {{ day.entry.featuring }})</span>
+                    </div>
+                    <div>
+                      <span class="artist">{{ day.entry.artist }}</span>
+                       •
+                      <span class="album">{{ day.entry.album }}</span>
+                       •
+                      <span class="year">{{ day.entry.year }}</span>
+                    </div>
                   </div>
-                </div>
-              </template>
-            
-              <template v-else>
-                <div class="meta missing">
-                  <strong>???</strong>
-                </div>
-              </template>
+                </template>
+
+                <template v-else>
+                  <div class="meta missing"><strong>???</strong></div>
+                </template>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- ===================== STATS TAB ===================== -->
     <div v-if="activeTab === 'stats'" class="stats-view">
       <h2>Breakdown</h2>
 
@@ -197,7 +210,13 @@
         <div class="stats-card year-chart-card">
           <h3>Years</h3>
           <div v-if="yearBarStats.length" class="year-bar-chart">
-            <div v-for="y in yearBarStats" :key="y.name" class="year-bar-col">
+            <div
+              v-for="y in yearBarStats"
+              :key="y.name"
+              class="year-bar-col"
+              :class="{ selected: y.selected, dimmed: y.dimmed }"
+              @click="toggleStatYear(y.name)"
+            >
               <span class="year-bar-count">{{ y.count || '' }}</span>
               <div class="year-bar-fill" :style="{ height: (y.count / maxYearCount * 100) + '%' }"></div>
               <span class="year-bar-label">{{ y.name }}</span>
@@ -209,7 +228,7 @@
         <div class="stats-card">
           <h3>Artists</h3>
           <div class="h-bar-chart">
-            <div v-for="a in artistStats" :key="a.name" class="h-bar-row">
+            <div v-for="a in artistStats" :key="a.name" class="h-bar-row" :class="{ dimmed: a.dimmed }" @click="toggleStatArtist(a.name)">
               <span class="h-bar-label">{{ a.name }}</span>
               <div class="h-bar-track">
                 <div class="h-bar-fill" :style="{ width: (a.count / artistStats[0].count * 100) + '%' }"></div>
@@ -223,7 +242,7 @@
         <div class="stats-card">
           <h3>Albums</h3>
           <div class="album-grid">
-            <div v-for="a in albumGridStats" :key="a.name" class="album-tile">
+            <div v-for="a in albumGridStats" :key="a.name" class="album-tile" :class="{ dimmed: a.dimmed }">
               <div class="album-art-wrap" @click="openCoverPicker(a.name)">
                 <img v-if="a.albumArt" :src="a.albumArt" :alt="a.name" />
                 <div v-else class="album-art-placeholder"></div>
@@ -255,19 +274,29 @@
             />
           </div>
           <div class="cover-modal-custom">
-            <input
-              v-model="albumCoverCustomInput"
-              placeholder="Custom art URL..."
-              @keydown.enter.prevent="setCustomCover"
-            />
+            <input v-model="albumCoverCustomInput" placeholder="Custom art URL..." @keydown.enter.prevent="setCustomCover" />
             <button @click="setCustomCover">Use</button>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- ===================== CONFIRM DIALOG ===================== -->
+    <div v-if="showConfirmDialog" class="confirm-backdrop">
+      <div class="confirm-dialog">
+        <div>
+          <strong>Unsaved changes</strong>
+          <p>You have unsaved changes for this entry. Discard them and switch dates?</p>
+        </div>
+        <div class="confirm-actions">
+          <button class="btn-cancel" @click="cancelDateChange">Keep editing</button>
+          <button class="btn-discard" @click="confirmDiscard">Discard</button>
+        </div>
+      </div>
+    </div>
+
   </div>
-  
+
   <script src="./script.js"></script>
 </body>
 </html>
