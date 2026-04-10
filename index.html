@@ -193,22 +193,7 @@
       <h2>Breakdown</h2>
 
       <div class="stats-grid">
-        <div class="stats-card">
-          <h3>Artists</h3>
-          <div v-for="a in artistStats" :key="a.name" class="stat-row">
-            <span>{{ a.name }}</span>
-            <span class="count">{{ a.count }}</span>
-          </div>
-        </div>
-
-        <div class="stats-card">
-          <h3>Albums</h3>
-          <div v-for="a in albumStats" :key="a.name" class="stat-row">
-            <span>{{ a.name }}</span>
-            <span class="count">{{ a.count }}</span>
-          </div>
-        </div>
-
+        <!-- Years -->
         <div class="stats-card year-chart-card">
           <h3>Years</h3>
           <div v-if="yearBarStats.length" class="year-bar-chart">
@@ -219,8 +204,66 @@
             </div>
           </div>
         </div>
+
+        <!-- Artists -->
+        <div class="stats-card">
+          <h3>Artists</h3>
+          <div class="h-bar-chart">
+            <div v-for="a in artistStats" :key="a.name" class="h-bar-row">
+              <span class="h-bar-label">{{ a.name }}</span>
+              <div class="h-bar-track">
+                <div class="h-bar-fill" :style="{ width: (a.count / artistStats[0].count * 100) + '%' }"></div>
+              </div>
+              <span class="h-bar-count">{{ a.count }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Albums -->
+        <div class="stats-card">
+          <h3>Albums</h3>
+          <div class="album-grid">
+            <div v-for="a in albumGridStats" :key="a.name" class="album-tile">
+              <div class="album-art-wrap" @click="openCoverPicker(a.name)">
+                <img v-if="a.albumArt" :src="a.albumArt" :alt="a.name" />
+                <div v-else class="album-art-placeholder"></div>
+                <span class="album-play-count">{{ a.count }}</span>
+              </div>
+              <div class="album-tile-meta">
+                <span class="album-tile-name">{{ a.name }}</span>
+                <span class="album-tile-artist">{{ a.primaryArtist }}<span v-if="a.extraArtists"> +{{ a.extraArtists }}</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
+      <!-- Cover picker modal -->
+      <div v-if="albumCoverOverlay" class="cover-modal-backdrop" @click="albumCoverOverlay = null">
+        <div class="cover-modal" @click.stop>
+          <div class="cover-modal-header">
+            <strong>{{ albumCoverOverlay }}</strong>
+            <button @click="albumCoverOverlay = null">✕</button>
+          </div>
+          <div class="cover-modal-options" v-if="coverModalCovers.length">
+            <img
+              v-for="url in coverModalCovers"
+              :key="url"
+              :src="url"
+              :class="{ 'cover-selected': activeCoverForModal === url }"
+              @click="setAlbumCover(albumCoverOverlay, url)"
+            />
+          </div>
+          <div class="cover-modal-custom">
+            <input
+              v-model="albumCoverCustomInput"
+              placeholder="Custom art URL..."
+              @keydown.enter.prevent="setCustomCover"
+            />
+            <button @click="setCustomCover">Use</button>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>

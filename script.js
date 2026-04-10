@@ -12,11 +12,15 @@ const app = Vue.createApp({
       showFeatSuggestions: false,
       showCanonSuggestions: false,
       editingDate: null,
+      albumCoverOverrides: {},
+      albumCoverOverlay: null,
+      albumCoverCustomInput: "",
     };
   },
 
   mounted() {
     this.entries = this.loadEntries();
+    this.albumCoverOverrides = this.loadAlbumCovers();
   },
 
   watch: {
@@ -157,6 +161,61 @@ const app = Vue.createApp({
     maxYearCount() {
       return Math.max(...this.yearBarStats.map(y => y.count), 1);
     },
+
+    albumGridStats() {
+      const map = {};
+
+      this.entries.forEach(e => {
+        if (!e.album) return;
+        if (!map[e.album]) {
+          map[e.album] = {
+            name: e.album,
+            count: 0,
+            coverFreq: {},
+            primaryArtist: e.artist,
+            artistSet: new Set(),
+          };
+        }
+        const a = map[e.album];
+        a.count++;
+        if (e.albumArt) {
+          a.coverFreq[e.albumArt] = (a.coverFreq[e.albumArt] || 0) + 1;
+        }
+        const artists = (e.canonArtists && e.canonArtists.length)
+          ? e.canonArtists
+          : [e.artist];
+        artists.forEach(name => a.artistSet.add(name));
+      });
+
+      return Object.values(map)
+        .map(a => {
+          const allCovers = Object.entries(a.coverFreq)
+            .sort((x, y) => y[1] - x[1])
+            .map(([url]) => url);
+          const albumArt = this.albumCoverOverrides[a.name] || allCovers[0] || null;
+          return {
+            name: a.name,
+            count: a.count,
+            albumArt,
+            allCovers,
+            primaryArtist: a.primaryArtist,
+            extraArtists: Math.max(0, a.artistSet.size - 1),
+          };
+        })
+        .sort((a, b) => b.count - a.count);
+    },
+
+    coverModalCovers() {
+      if (!this.albumCoverOverlay) return [];
+      const album = this.albumGridStats.find(a => a.name === this.albumCoverOverlay);
+      return album ? album.allCovers : [];
+    },
+
+    activeCoverForModal() {
+      return this.albumCoverOverrides[this.albumCoverOverlay]
+        || this.coverModalCovers[0]
+        || null;
+    },
   },
 
   methods: {
@@ -204,6 +263,15 @@ const app = Vue.createApp({
 
     saveEntries() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.entries));
+    },
+
+    loadAlbumCovers() {
+      const raw = localStorage.getItem("albumCoverOverrides");
+      return raw ? JSON.parse(raw) : {};
+    },
+
+    saveAlbumCovers() {
+      localStorage.setItem("albumCoverOverrides", JSON.stringify(this.albumCoverOverrides));
     },
 
     // ---- Canon artists (per-song) ----
@@ -261,6 +329,24 @@ const app = Vue.createApp({
       this.form = this.createEmptyForm();
       this.canonFormInput = "";
       this.editingDate = null;
+    },
+
+    openCoverPicker(name) {
+      this.albumCoverOverlay = name;
+      this.albumCoverCustomInput = "";
+    },
+
+    setAlbumCover(name, url) {
+      this.albumCoverOverrides[name] = url;
+      this.saveAlbumCovers();
+      this.albumCoverOverlay = null;
+      this.albumCoverCustomInput = "";
+    },
+
+    setCustomCover() {
+      const url = this.albumCoverCustomInput.trim();
+      if (!url) return;
+      this.setAlbumCover(this.albumCoverOverlay, url);
     },
 
     selectEntry(date) {
