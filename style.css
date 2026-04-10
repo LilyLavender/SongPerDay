@@ -197,7 +197,7 @@ input.input-art { width: 309px; }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
 }
 
@@ -218,4 +218,49 @@ input.input-art { width: 309px; }
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
   font-size: 0.8rem;
+}
+
+.year-chart-card {
+  grid-column: 1 / -1;
+}
+
+.year-bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 160px;
+  padding-bottom: 1.6rem;
+}
+
+.year-bar-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  position: relative;
+}
+
+.year-bar-fill {
+  width: 100%;
+  background: #4da3ff;
+  border-radius: 3px 3px 0 0;
+  transition: height 0.3s ease;
+}
+
+.year-bar-count {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-bottom: 2px;
+  min-height: 1em;
+}
+
+.year-bar-label {
+  position: absolute;
+  bottom: -1.5rem;
+  font-size: 0.7rem;
+  opacity: 0.6;
+  white-space: nowrap;
 }

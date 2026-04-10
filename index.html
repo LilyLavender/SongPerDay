@@ -166,11 +166,14 @@
           </div>
         </div>
 
-        <div class="stats-card">
+        <div class="stats-card year-chart-card">
           <h3>Years</h3>
-          <div v-for="y in yearStats" :key="y.name" class="stat-row">
-            <span>{{ y.name }}</span>
-            <span class="count">{{ y.count }}</span>
+          <div v-if="yearBarStats.length" class="year-bar-chart">
+            <div v-for="y in yearBarStats" :key="y.name" class="year-bar-col">
+              <span class="year-bar-count">{{ y.count || '' }}</span>
+              <div class="year-bar-fill" :style="{ height: (y.count / maxYearCount * 100) + '%' }"></div>
+              <span class="year-bar-label">{{ y.name }}</span>
+            </div>
           </div>
         </div>
       </div>

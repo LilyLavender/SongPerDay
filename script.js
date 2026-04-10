@@ -105,6 +105,26 @@ const app = Vue.createApp({
     yearStats() {
       return this.buildStats(this.entries.map(e => e.year));
     },
+
+    yearBarStats() {
+      const counts = {};
+      this.entries.forEach(e => {
+        if (e.year) counts[e.year] = (counts[e.year] || 0) + 1;
+      });
+
+      const years = Object.keys(counts).map(Number).sort((a, b) => a - b);
+      if (!years.length) return [];
+
+      const result = [];
+      for (let y = years[0]; y <= years[years.length - 1]; y++) {
+        result.push({ name: String(y), count: counts[y] || 0 });
+      }
+      return result;
+    },
+
+    maxYearCount() {
+      return Math.max(...this.yearBarStats.map(y => y.count), 1);
+    },
   },
 
   methods: {
