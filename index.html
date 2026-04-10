@@ -61,7 +61,23 @@
               </div>
               <!-- Ft. -->
               <div class="form-group">
-                <input class="input-ft" v-model="form.featuring" placeholder="Ft." />
+                <input
+                  class="input-ft"
+                  v-model="form.featuring"
+                  placeholder="Ft."
+                  @input="showFeatSuggestions = true"
+                  @focus="showFeatSuggestions = true"
+                  @blur="hideSuggestions('feat')"
+                />
+                <div v-if="showFeatSuggestions && filteredFeat.length" class="suggestions">
+                  <div
+                    v-for="feat in filteredFeat"
+                    :key="feat"
+                    @mousedown.prevent="selectFeat(feat)"
+                  >
+                    {{ feat }}
+                  </div>
+                </div>
               </div>
             </div>
             <!-- Album & year -->
@@ -98,6 +114,32 @@
             </div>
             <!-- Album art -->
             <input class="input-art" v-model="form.albumArt" placeholder="Album art URL" />
+            <!-- Canon artists -->
+            <div class="canon-row">
+              <span v-for="(a, i) in form.canonArtists" :key="i" class="alias-chip">
+                {{ a }}<button type="button" @mousedown.prevent="removeCanonArtist(i)">×</button>
+              </span>
+              <div class="form-group">
+                <input
+                  class="input-canon"
+                  v-model="canonFormInput"
+                  placeholder="Canon artist..."
+                  @keydown.enter.prevent="addCanonArtist"
+                  @input="showCanonSuggestions = true"
+                  @focus="showCanonSuggestions = true"
+                  @blur="hideSuggestions('canon')"
+                />
+                <div v-if="showCanonSuggestions && filteredCanon.length" class="suggestions">
+                  <div
+                    v-for="name in filteredCanon"
+                    :key="name"
+                    @mousedown.prevent="selectCanon(name)"
+                  >
+                    {{ name }}
+                  </div>
+                </div>
+              </div><button type="button" @click="addCanonArtist">+</button>
+            </div>
 
             <button type="submit">Save Song</button>
           </form>
@@ -177,6 +219,7 @@
           </div>
         </div>
       </div>
+
     </div>
 
   </div>

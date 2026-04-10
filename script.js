@@ -8,6 +8,9 @@ const app = Vue.createApp({
       showArtistSuggestions: false,
       showAlbumSuggestions: false,
       activeTab: "log",
+      canonFormInput: "",
+      showFeatSuggestions: false,
+      showCanonSuggestions: false,
     };
   },
 
@@ -75,12 +78,32 @@ const app = Vue.createApp({
       return this.todayISO();
     },
 
+    allArtists() {
+      const names = new Set();
+      this.entries.forEach(e => {
+        if (e.artist) names.add(e.artist);
+        if (e.featuring) names.add(e.featuring);
+        (e.canonArtists || []).forEach(a => names.add(a));
+      });
+      return [...names];
+    },
+
     filteredArtists() {
       const input = this.normalize(this.form.artist);
       if (!input) return [];
+      return this.allArtists.filter(a => this.normalize(a).includes(input));
+    },
 
-      return [...new Set(this.entries.map(e => e.artist))]
-        .filter(a => this.normalize(a).includes(input));
+    filteredFeat() {
+      const input = this.normalize(this.form.featuring);
+      if (!input) return [];
+      return this.allArtists.filter(a => this.normalize(a).includes(input));
+    },
+
+    filteredCanon() {
+      const input = this.normalize(this.canonFormInput);
+      if (!input) return [];
+      return this.allArtists.filter(a => this.normalize(a).includes(input));
     },
 
     filteredAlbums() {
@@ -95,7 +118,15 @@ const app = Vue.createApp({
     },
 
     artistStats() {
-      return this.buildStats(this.entries.map(e => e.artist));
+      const names = [];
+      this.entries.forEach(e => {
+        if (e.canonArtists && e.canonArtists.length) {
+          names.push(...e.canonArtists);
+        } else {
+          names.push(e.artist);
+        }
+      });
+      return this.buildStats(names);
     },
 
     albumStats() {
@@ -159,7 +190,8 @@ const app = Vue.createApp({
         featuring: "",
         album: "",
         year: "",
-        albumArt: ""
+        albumArt: "",
+        canonArtists: [],
       };
     },
 
@@ -171,6 +203,19 @@ const app = Vue.createApp({
 
     saveEntries() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.entries));
+    },
+
+    // ---- Canon artists (per-song) ----
+    addCanonArtist() {
+      const name = this.canonFormInput.trim();
+      if (!name || (this.form.canonArtists || []).includes(name)) return;
+      if (!this.form.canonArtists) this.form.canonArtists = [];
+      this.form.canonArtists.push(name);
+      this.canonFormInput = "";
+    },
+
+    removeCanonArtist(i) {
+      this.form.canonArtists.splice(i, 1);
     },
 
     // ---- Validation ----
@@ -213,6 +258,7 @@ const app = Vue.createApp({
 
       this.saveEntries();
       this.form = this.createEmptyForm();
+      this.canonFormInput = "";
     },
 
     onArtistInput() {
@@ -229,6 +275,17 @@ const app = Vue.createApp({
     selectArtist(artist) {
       this.form.artist = artist;
       this.showArtistSuggestions = false;
+    },
+
+    selectFeat(feat) {
+      this.form.featuring = feat;
+      this.showFeatSuggestions = false;
+    },
+
+    selectCanon(name) {
+      this.canonFormInput = name;
+      this.addCanonArtist();
+      this.showCanonSuggestions = false;
     },
 
     selectAlbum(album) {
@@ -251,6 +308,8 @@ const app = Vue.createApp({
       setTimeout(() => {
         if (type === "artist") this.showArtistSuggestions = false;
         if (type === "album") this.showAlbumSuggestions = false;
+        if (type === "feat") this.showFeatSuggestions = false;
+        if (type === "canon") this.showCanonSuggestions = false;
       }, 100);
     },
 

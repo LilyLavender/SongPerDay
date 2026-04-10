@@ -264,3 +264,41 @@ input.input-art { width: 309px; }
   opacity: 0.6;
   white-space: nowrap;
 }
+
+/* ---- Canon artists (per-song form) ---- */
+
+.canon-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.alias-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: #2a2a2a;
+  border-radius: 999px;
+  padding: 0.2rem 0.5rem 0.2rem 0.65rem;
+  font-size: 0.85rem;
+}
+
+.alias-chip button {
+  background: none;
+  border: none;
+  color: #777;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+  line-height: 1;
+}
+
+.alias-chip button:hover {
+  color: #ff6b6b;
+}
+
+input.input-canon {
+  width: 130px;
+  font-size: 0.85rem;
+}
