@@ -92,6 +92,59 @@ body {
   border-radius: 999px;
 }
 
+.data-menu {
+  position: relative;
+  margin-top: auto;
+}
+
+.data-menu-toggle {
+  width: 100%;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.8rem;
+  text-align: left;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.data-menu-toggle:hover {
+  color: var(--text);
+  border-color: rgba(255,255,255,0.18);
+}
+
+.data-menu-dropdown {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #111827;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  z-index: 100;
+}
+
+.data-menu-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.data-menu-dropdown button:hover {
+  background: var(--bg-card-hover);
+  color: var(--text);
+}
+
 /* =============================================
    LOG TAB LAYOUT
    ============================================= */
@@ -116,6 +169,8 @@ body {
   top: 48px;
   height: calc(100vh - 48px);
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-column h1 {

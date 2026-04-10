@@ -21,12 +21,19 @@ const app = Vue.createApp({
       showConfirmDialog: false,
       selectedStatYear: null,
       selectedArtist: null,
+      dataMenuOpen: false,
     };
   },
 
   mounted() {
     this.entries = this.loadEntries();
     this.albumCoverOverrides = this.loadAlbumCovers();
+
+    // Pre-fill form if today already has an entry
+    const todayEntry = this.entries.find(e => e.date === this.form.date);
+    if (todayEntry) {
+      this.form = { ...todayEntry, canonArtists: todayEntry.canonArtists || [] };
+    }
 
     // Collapse all months except the current one
     const currentMonth = this.todayISO().slice(0, 7);
@@ -536,6 +543,42 @@ const app = Vue.createApp({
       const url = this.albumCoverCustomInput.trim();
       if (!url) return;
       this.setAlbumCover(this.albumCoverOverlay, url);
+    },
+
+    // ---- Import / Export ----
+    exportData() {
+      const data = {
+        entries: this.entries,
+        albumCoverOverrides: this.albumCoverOverrides,
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "song-per-day-data.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    },
+
+    importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (!Array.isArray(data.entries)) throw new Error("Invalid format: missing entries array.");
+          this.entries = data.entries;
+          this.albumCoverOverrides = data.albumCoverOverrides || {};
+          this.saveEntries();
+          this.saveAlbumCovers();
+          alert(`Imported ${this.entries.length} entries.`);
+        } catch (err) {
+          alert("Import failed: " + err.message);
+        }
+        this.$refs.importFile.value = "";
+      };
+      reader.readAsText(file);
     },
 
     // ---- Stats ----

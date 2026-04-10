@@ -139,6 +139,15 @@
 
             <button type="submit">Save Song</button>
           </form>
+
+          <div class="data-menu">
+            <button type="button" class="data-menu-toggle" @click="dataMenuOpen = !dataMenuOpen">Data ▾</button>
+            <div v-if="dataMenuOpen" class="data-menu-dropdown">
+              <button type="button" @click="exportData">Export JSON</button>
+              <button type="button" @click="$refs.importFile.click()">Import JSON</button>
+              <input type="file" accept=".json" @change="importData" ref="importFile" style="display:none" />
+            </div>
+          </div>
         </div>
 
         <!-- List -->
