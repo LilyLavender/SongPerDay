@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Song Per Day</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="app">
+
+    <div class="tabs">
+      <button :class="{ active: activeTab === 'log' }" @click="activeTab = 'log'">
+        Log
+      </button>
+      <button :class="{ active: activeTab === 'stats' }" @click="activeTab = 'stats'">
+        Stats
+      </button>
+    </div>
+
+    <div v-if="activeTab === 'log'">
+
+      <div class="layout">
+        <!-- Form -->
+        <div class="form-column">
+          <h1>Song Per Day</h1>
+
+          <form @submit.prevent="saveSong">
+            <label>
+              Day
+              <input type="date" v-model="form.date" />
+            </label>
+
+            <!-- Title -->
+            <input class="input-title" v-model="form.song" placeholder="Song title" required />
+            <!-- Artist & ft. -->
+            <div class="form-row">
+              <!-- Artist -->
+              <div class="form-group">
+                <input
+                  class="input-artist"
+                  v-model="form.artist"
+                  placeholder="Artist"
+                  @input="onArtistInput"
+                  @focus="showArtistSuggestions = true"
+                  @blur="hideSuggestions('artist')"
+                  required
+                />
+                <div
+                  v-if="showArtistSuggestions && filteredArtists.length"
+                  class="suggestions"
+                >
+                  <div
+                    v-for="artist in filteredArtists"
+                    :key="artist"
+                    @mousedown.prevent="selectArtist(artist)"
+                  >
+                    {{ artist }}
+                  </div>
+                </div>
+              </div>
+              <!-- Ft. -->
+              <div class="form-group">
+                <input class="input-ft" v-model="form.featuring" placeholder="Ft." />
+              </div>
+            </div>
+            <!-- Album & year -->
+            <div class="form-row">
+              <!-- Album -->
+              <div class="form-group">
+                <input
+                  class="input-album"
+                  v-model="form.album"
+                  placeholder="Album"
+                  @input="onAlbumInput"
+                  @focus="showAlbumSuggestions = true"
+                  @blur="hideSuggestions('album')"
+                  :disabled="!form.artist"
+                  required
+                />
+                <div
+                  v-if="showAlbumSuggestions && filteredAlbums.length"
+                  class="suggestions"
+                >
+                  <div
+                    v-for="album in filteredAlbums"
+                    :key="album"
+                    @mousedown.prevent="selectAlbum(album)"
+                  >
+                    {{ album }}
+                  </div>
+                </div>
+              </div>
+              <!-- Year -->
+              <div class="form-group">
+                <input class="input-year" v-model="form.year" placeholder="Year" type="number" />
+              </div>
+            </div>
+            <!-- Album art -->
+            <input class="input-art" v-model="form.albumArt" placeholder="Album art URL" />
+
+            <button type="submit">Save Song</button>
+          </form>
+        </div>
+
+        <!-- List -->
+        <div class="list-column">
+          <div class="entries">
+            <div class="entry"
+                 v-for="day in yearEntries"
+                 :key="day.date"
+                 :class="{ today: day.date === todayISOComputed }">
+
+              <div class="date">
+                <div class="month">{{ formatMonth(day.date) }}</div>
+                <div class="day">{{ formatDay(day.date) }}</div>
+              </div>
+            
+              <template v-if="day.entry">
+                <img
+                  v-if="day.entry.albumArt"
+                  :src="day.entry.albumArt"
+                  alt="Album art"
+                />
+                <div class="meta">
+                  <strong class="song">{{ day.entry.song }}</strong>
+                  <span class="feat" v-if="day.entry.featuring">(ft. {{ day.entry.featuring }})</span>
+                  <div>
+                    <span class="artist">{{ day.entry.artist }}</span>
+                     • 
+                    <span class="album">{{ day.entry.album }}</span>
+                     • 
+                    <span class="year">{{ day.entry.year }}</span>
+                  </div>
+                </div>
+              </template>
+            
+              <template v-else>
+                <div class="meta missing">
+                  <strong>???</strong>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="activeTab === 'stats'" class="stats-view">
+      <h2>Breakdown</h2>
+
+      <div class="stats-grid">
+        <div class="stats-card">
+          <h3>Artists</h3>
+          <div v-for="a in artistStats" :key="a.name" class="stat-row">
+            <span>{{ a.name }}</span>
+            <span class="count">{{ a.count }}</span>
+          </div>
+        </div>
+
+        <div class="stats-card">
+          <h3>Albums</h3>
+          <div v-for="a in albumStats" :key="a.name" class="stat-row">
+            <span>{{ a.name }}</span>
+            <span class="count">{{ a.count }}</span>
+          </div>
+        </div>
+
+        <div class="stats-card">
+          <h3>Years</h3>
+          <div v-for="y in yearStats" :key="y.name" class="stat-row">
+            <span>{{ y.name }}</span>
+            <span class="count">{{ y.count }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+  <script src="./script.js"></script>
+</body>
+</html>
